@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BagaskaraBot — Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Ambient Background -->
+    <div class="ambient">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">🤖</div>
+            <div>
+                <div class="brand-name">BagaskaraBot</div>
+                <div class="brand-sub">v2.0 Dashboard</div>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <a href="#" class="nav-item active" data-page="overview">
+                <span class="nav-icon">📊</span> Overview
+            </a>
+            <a href="#" class="nav-item" data-page="stocks">
+                <span class="nav-icon">📦</span> Stok
+            </a>
+            <a href="#" class="nav-item" data-page="penjualan">
+                <span class="nav-icon">&#128184;</span> Penjualan
+            </a>
+            <a href="#" class="nav-item" data-page="tracking">
+                <span class="nav-icon">🔍</span> Cek Resi
+            </a>
+            <a href="#" class="nav-item" data-page="catalog">
+                <span class="nav-icon">🏷️</span> Katalog & Harga
+            </a>
+            <a href="#" class="nav-item" data-page="posting">
+                <span class="nav-icon">📤</span> Posting Manual
+            </a>
+            <a href="#" class="nav-item" data-page="logs">
+                <span class="nav-icon">📋</span> Log Posting FB
+            </a>
+            <a href="#" class="nav-item" data-page="console">
+                <span class="nav-icon">💻</span> Live Console
+            </a>
+            <a href="#" class="nav-item" data-page="settings">
+                <span class="nav-icon">⚙️</span> Pengaturan
+            </a>
+        </nav>
+
+        <!-- Bot Status -->
+        <div class="sidebar-status">
+            <div class="status-row">
+                <span class="dot dot-wa" id="dot-wa"></span>
+                <span>WhatsApp</span>
+                <span class="status-label" id="label-wa">Offline</span>
+            </div>
+            <div class="status-row">
+                <span class="dot dot-fb" id="dot-fb"></span>
+                <span>Facebook</span>
+                <span class="status-label" id="label-fb">Offline</span>
+            </div>
+            <div class="status-row">
+                <span class="dot dot-cycle" id="dot-cycle"></span>
+                <span>Siklus</span>
+                <span class="status-label" id="label-cycle">-</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+
+        <!-- ── PAGE: Overview ─────────────────────────────────────── -->
+        <section class="page active" id="page-overview">
+            <div class="page-header">
+                <h1>Overview</h1>
+                <p class="page-sub">Status real-time BagaskaraBot</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card glass">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-val green" id="stat-ready">-</div>
+                    <div class="stat-lbl">Unit Ready</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon">🚚</div>
+                    <div class="stat-val blue" id="stat-jalan">-</div>
+                    <div class="stat-lbl">Unit Di Jalan</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-val" id="stat-total">-</div>
+                    <div class="stat-lbl">Total Stok</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon">⚠️</div>
+                    <div class="stat-val yellow" id="stat-stale">-</div>
+                    <div class="stat-lbl">Menganggur &gt;30 Hari</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-val" id="stat-modal" style="font-size:18px">-</div>
+                    <div class="stat-lbl">Modal Tertahan</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-val green" id="stat-omzet" style="font-size:18px">-</div>
+                    <div class="stat-lbl">Potensi Omzet</div>
+                </div>
+            </div>
+
+            <!-- Stale Stock Alert -->
+            <div id="stale-alert" class="glass card" style="display:none;border-left:3px solid var(--yellow)">
+                <div style="display:flex;align-items:center;gap:10px">
+                    <span style="font-size:20px">⚠️</span>
+                    <div>
+                        <div style="font-weight:700;color:var(--yellow)" id="stale-alert-title">Stok Menganggur</div>
+                        <div style="font-size:12px;color:var(--sub)" id="stale-alert-desc"></div>
+                    </div>
+                    <button class="btn btn-sm" style="margin-left:auto"
+                        onclick="showPage('stocks');document.getElementById('filter-age').value='30+';applyFilters()">Lihat
+                        →</button>
+                </div>
+            </div>
+
+            <!-- Posting Toggle Card -->
+            <div class="glass card posting-toggle-card">
+                <div>
+                    <div class="card-title">Auto-Posting Facebook</div>
+                    <div class="card-sub" id="posting-campaign-label">Campaign: -</div>
+                </div>
+                <label class="toggle" id="toggle-posting">
+                    <input type="checkbox" id="chk-posting">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Cycle Progress -->
+            <div class="glass card">
+                <div class="card-title">Siklus Terakhir</div>
+                <div class="cycle-info">
+                    <div class="cycle-item">
+                        <span class="cycle-label">Siklus ke-</span>
+                        <span class="cycle-val" id="cycle-num">-</span>
+                    </div>
+                    <div class="cycle-item">
+                        <span class="cycle-label">Posting: Sukses</span>
+                        <span class="cycle-val green" id="cycle-success">-</span>
+                    </div>
+                    <div class="cycle-item">
+                        <span class="cycle-label">Posting: Gagal</span>
+                        <span class="cycle-val red" id="cycle-fail">-</span>
+                    </div>
+                    <div class="cycle-item">
+                        <span class="cycle-label">Berikutnya</span>
+                        <span class="cycle-val" id="cycle-next">-</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── PAGE: Stocks ───────────────────────────────────────── -->
+        <section class="page" id="page-stocks">
+            <div class="page-header">
+                <h1>📦 Inventori Stok</h1>
+                <div style="display:flex;gap:8px">
+                    <button class="btn btn-primary btn-sm" onclick="openAddModal()">➕ Tambah Stok</button>
+                    <button class="btn btn-sm" onclick="exportCSV()">⬇️ Export CSV</button>
+                    <button class="btn btn-sm" onclick="loadStocks()">🔄 Refresh</button>
+                </div>
+            </div>
+
+
+            <!-- Summary Cards -->
+            <div class="inv-summary" id="inv-summary">
+                <div class="inv-card glass">
+                    <div class="inv-val" id="inv-total">-</div>
+                    <div class="inv-lbl">Total Unit</div>
+                </div>
+                <div class="inv-card glass">
+                    <div class="inv-val green" id="inv-ready">-</div>
+                    <div class="inv-lbl">✅ Ready</div>
+                </div>
+                <div class="inv-card glass">
+                    <div class="inv-val blue" id="inv-jalan">-</div>
+                    <div class="inv-lbl">🚚 Di Jalan</div>
+                </div>
+                <div class="inv-card glass">
+                    <div class="inv-val yellow" id="inv-stale">-</div>
+                    <div class="inv-lbl">⚠️ Stok &gt;7 Hari</div>
+                </div>
+                <div class="inv-card glass">
+                    <div class="inv-val" id="inv-users">-</div>
+                    <div class="inv-lbl">👥 Pemilik</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="glass card">
+                <div class="filter-grid">
+                    <input type="text" id="filter-stocks" placeholder="🔍 Cari nama barang..." class="glass-input"
+                        oninput="applyFilters()">
+                    <select id="filter-status" class="glass-select" onchange="applyFilters()">
+                        <option value="">Semua Status</option>
+                        <option value="Ready">✅ Ready</option>
+                        <option value="Not Ready">🚚 Di Jalan</option>
+                    </select>
+                    <select id="filter-user" class="glass-select" onchange="applyFilters()">
+                        <option value="">Semua Pemilik</option>
+                    </select>
+                    <select id="filter-age" class="glass-select" onchange="applyFilters()">
+                        <option value="">Semua Usia</option>
+                        <option value="1">Hari Ini</option>
+                        <option value="7">≤ 7 Hari</option>
+                        <option value="30">≤ 30 Hari</option>
+                        <option value="30+">Lebih 30 Hari ⚠️</option>
+                    </select>
+                    <button class="btn btn-sm" onclick="resetFilters()">✖ Reset Filter</button>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="glass card" style="padding:0;overflow:hidden">
+                <div class="table-wrap">
+                    <table id="table-stocks">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-col="id" onclick="sortTable('id')">#</th>
+                                <th class="sortable" data-col="user_name" onclick="sortTable('user_name')">Pemilik ↕
+                                </th>
+                                <th class="sortable" data-col="item_name" onclick="sortTable('item_name')">Nama Barang ↕
+                                </th>
+                                <th class="sortable" data-col="status" onclick="sortTable('status')">Status ↕</th>
+                                <th class="sortable" data-col="age" onclick="sortTable('age')">Lama Masuk ↕</th>
+                                <th>Usia Stok</th>
+                                <th>Resi / Kurir</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-stocks">
+                            <tr>
+                                <td colspan="7" class="loading">Memuat data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-footer">
+                    <span id="stock-count-label" style="font-size:12px;color:var(--sub)"></span>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ── PAGE: Tracking / Cek Resi ─────────────────────────── -->
+        <section class="page" id="page-tracking">
+            <div class="page-header">
+                <h1>🔍 Cek Resi</h1>
+                <p class="page-sub">Single check atau bulk check banyak resi sekaligus</p>
+            </div>
+
+            <!-- Mode Tabs -->
+            <div class="track-mode-tabs">
+                <button class="track-tab active" id="tab-single" onclick="switchTrackMode('single')">
+                    📦 Single Resi
+                </button>
+                <button class="track-tab" id="tab-bulk" onclick="switchTrackMode('bulk')">
+                    📋 Bulk Check
+                </button>
+            </div>
+
+            <!-- ── SINGLE MODE ────────────────────────── -->
+            <div id="mode-single">
+                <div class="glass card">
+                    <div class="track-input-row">
+                        <select id="si-courier" class="glass-select" style="min-width:140px">
+                            <option value="">-- Kurir --</option>
+                            <option value="jnt">J&T Express</option>
+                            <option value="jne">JNE</option>
+                            <option value="sicepat">SiCepat</option>
+                            <option value="spx">Shopee Express</option>
+                            <option value="anteraja">AnterAja</option>
+                            <option value="wahana">Wahana</option>
+                            <option value="idexpress">ID Express</option>
+                            <option value="pos">POS Indonesia</option>
+                            <option value="ninja">Ninja Express</option>
+                            <option value="lion">Lion Parcel</option>
+                            <option value="tiki">TIKI</option>
+                            <option value="sap">SAP Express</option>
+                            <option value="grab">Grab Express</option>
+                            <option value="gosend">GoSend</option>
+                            <option value="rpx">RPX</option>
+                            <option value="pahala">Pahala Express</option>
+                        </select>
+                        <input type="text" id="si-awb" class="glass-input" placeholder="Nomor resi / AWB..."
+                            onkeydown="if(event.key==='Enter') singleTrack()">
+                        <input type="text" id="si-hp" class="glass-input" placeholder="5 digit HP (JNE saja)"
+                            style="max-width:180px">
+                        <button class="btn btn-primary" onclick="singleTrack()" id="btn-single-track">
+                            🔍 Cek Sekarang
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Result -->
+                <div id="single-result" style="display:none"></div>
+            </div>
+
+            <!-- ── BULK MODE ──────────────────────────── -->
+            <div id="mode-bulk" style="display:none">
+                <div class="glass card">
+                    <div class="card-title">Input Resi <small style="color:var(--sub);font-weight:400">Format: KURIR AWB
+                            (satu per baris)</small></div>
+                    <textarea id="bulk-input" class="glass-input" rows="8"
+                        placeholder="jnt 123456789012345&#10;sicepat 000987654321&#10;spx SG-123456-ID&#10;jne 8823456789 12345"></textarea>
+                    <div style="display:flex;gap:10px;margin-top:12px;align-items:center">
+                        <button class="btn btn-primary" onclick="bulkTrack()" id="btn-bulk-track">
+                            🚀 Cek Semua Resi
+                        </button>
+                        <span id="bulk-progress-label" style="font-size:12px;color:var(--sub)"></span>
+                    </div>
+                    <div class="progress-bar-wrap" id="bulk-bar-wrap" style="display:none;margin-top:10px">
+                        <div class="progress-bar" id="bulk-bar" style="width:0%"></div>
+                    </div>
+                </div>
+
+                <!-- Bulk Results Table -->
+                <div class="glass card" id="bulk-result-card" style="display:none;padding:0;overflow:hidden">
+                    <div style="padding:16px 16px 0">
+                        <div class="card-title" id="bulk-result-title">Hasil Bulk Check</div>
+                        <div style="display:flex;gap:8px;margin-bottom:12px" id="bulk-summary-bar"></div>
+                    </div>
+                    <div class="table-wrap">
+                        <table id="bulk-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Kurir</th>
+                                    <th>AWB</th>
+                                    <th>Status</th>
+                                    <th>Deskripsi Terakhir</th>
+                                    <th>Pengirim → Penerima</th>
+                                    <th>Update</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bulk-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div style="padding:10px 16px">
+                        <button class="btn btn-sm" onclick="exportBulkCSV()">⬇️ Export CSV</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── PAGE: Catalog ──────────────────────────────────────── -->
+        <section class="page" id="page-catalog">
+            <div class="page-header">
+                <h1>Katalog & Harga Kompetitor</h1>
+                <button class="btn btn-sm" onclick="loadCatalog()">🔄 Refresh</button>
+            </div>
+            <div class="table-wrap glass card">
+                <table id="table-catalog">
+                    <thead>
+                        <tr>
+                            <th>Nama Produk</th>
+                            <th>Harga Jual</th>
+                            <th>Modal</th>
+                            <th>Margin</th>
+                            <th>Kompetitor Avg</th>
+                            <th>Selisih</th>
+                            <th>Stok Ready</th>
+                            <th>Kondisi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-catalog">
+                        <tr>
+                            <td colspan="8" class="loading">Memuat data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ── PAGE: Posting Manual ─────────────────────────────── -->
+        <section class="page" id="page-posting">
+            <div class="page-header">
+                <h1>📤 Auto Post Grup FB</h1>
+                <p class="page-sub">Pilih grup, tulis konten, dan posting sekarang</p>
+            </div>
+
+            <!-- Step 1: Auth -->
+            <div class="glass card">
+                <div class="card-title">1. Status Login Facebook</div>
+                <div class="auth-row">
+                    <div id="auth-info" class="auth-info">Belum dicek</div>
+                    <button class="btn btn-primary" onclick="checkFbAuth()">🔄 Cek Status Login</button>
+                    <button class="btn" id="btn-confirm-login" onclick="confirmLogin()" style="display:none">✅ Sudah
+                        Login di Chrome</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Pilih Grup -->
+            <div class="glass card" id="card-groups">
+                <div class="card-title">2. Pilih Grup Target</div>
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="tab-saved">📂 Dari Campaign Tersimpan</button>
+                    <button class="tab-btn" data-tab="tab-scrape">🔍 Scrape Grup Baru</button>
+                </div>
+
+                <!-- Tab: Campaign -->
+                <div class="tab-pane active" id="tab-saved">
+                    <div class="form-row">
+                        <select id="sel-campaign" class="glass-select" onchange="loadCampaignGroups()">
+                            <option value="">-- Pilih Campaign --</option>
+                        </select>
+                        <span id="group-count" class="group-count"></span>
+                    </div>
+                    <div id="group-list-saved" class="group-list"></div>
+                </div>
+
+                <!-- Tab: Scrape -->
+                <div class="tab-pane" id="tab-scrape">
+                    <div class="form-row">
+                        <input type="text" id="input-keyword" class="glass-input"
+                            placeholder="Kata kunci grup (kosongkan = semua grup)">
+                        <button class="btn btn-primary" onclick="scrapeGroups()">🔍 Cari Grup</button>
+                    </div>
+                    <div id="scrape-status"></div>
+                    <div id="group-list-scrape" class="group-list"></div>
+                    <div id="scrape-save-row" class="form-row" style="display:none;margin-top:12px">
+                        <input type="text" id="input-campaign-name" class="glass-input"
+                            placeholder="Simpan sebagai campaign (nama)...">
+                        <button class="btn" onclick="saveCampaign()">💾 Simpan Campaign</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Konten -->
+            <div class="glass card">
+                <div class="card-title">3. Konten Posting <small style="color:var(--sub);font-weight:400">Spintax:
+                        {opsi1|opsi2}</small></div>
+                <div class="form-group" style="margin-bottom:12px">
+                    <div class="form-row">
+                        <div style="flex:2">
+                            <label style="font-size:12px;color:var(--sub)">Judul Barang</label>
+                            <input type="text" id="input-title" class="glass-input"
+                                placeholder="Cth: {Samsung A55|Samsung Galaxy A55} 8/256 Baru">
+                        </div>
+                        <div style="flex:1">
+                            <label style="font-size:12px;color:var(--sub)">Harga (angka)</label>
+                            <input type="text" id="input-price" class="glass-input" placeholder="3750000">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label style="font-size:12px;color:var(--sub)">Teks Postingan</label>
+                    <textarea id="input-text" class="glass-input" rows="5"
+                        placeholder="Tulis deskripsi jualan... \n{Halo|Hai|Hey} kak, ready stok HP!"></textarea>
+                </div>
+                <div class="form-group">
+                    <label style="font-size:12px;color:var(--sub)">Upload Gambar</label>
+                    <div class="upload-row">
+                        <label for="input-images" class="btn">📁 Pilih Gambar</label>
+                        <input type="file" id="input-images" multiple accept="image/*" hidden
+                            onchange="previewImages(this)">
+                        <span id="img-count" style="color:var(--sub);font-size:13px">Belum ada gambar</span>
+                    </div>
+                    <div id="img-preview" class="img-preview"></div>
+                </div>
+            </div>
+
+            <!-- Step 4: Eksekusi -->
+            <div class="glass card">
+                <div class="card-title">4. Eksekusi</div>
+                <div class="post-stats" id="post-stats" style="display:none">
+                    <div class="pstat green">
+                        <div id="ps-success">0</div>
+                        <div>✅ Berhasil</div>
+                    </div>
+                    <div class="pstat red">
+                        <div id="ps-fail">0</div>
+                        <div>❌ Gagal</div>
+                    </div>
+                    <div class="pstat blue">
+                        <div id="ps-skip">0</div>
+                        <div>⏩ Skip</div>
+                    </div>
+                    <div class="pstat">
+                        <div id="ps-total">0/0</div>
+                        <div>🔄 Progress</div>
+                    </div>
+                </div>
+                <div class="progress-bar-wrap" id="progress-bar-wrap" style="display:none">
+                    <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+                </div>
+                <div id="posting-log" class="posting-log"></div>
+                <div style="display:flex;gap:10px;margin-top:14px">
+                    <button class="btn blast" id="btn-start-posting" onclick="startPosting()">🔥 MULAI POSTING
+                        SEKARANG</button>
+                    <button class="btn" id="btn-stop-posting" onclick="stopPosting()" style="display:none">⏹
+                        Stop</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── PAGE: Logs ─────────────────────────────────────────── -->
+        <section class="page" id="page-logs">
+            <div class="page-header">
+                <h1>Log Posting Facebook</h1>
+                <button class="btn btn-sm" onclick="loadLogs()">🔄 Refresh</button>
+            </div>
+            <div class="logs-grid">
+                <div class="glass card">
+                    <div class="card-title success-title">✅ Berhasil</div>
+                    <div class="log-list" id="log-success"></div>
+                </div>
+                <div class="glass card">
+                    <div class="card-title fail-title">❌ Gagal</div>
+                    <div class="log-list" id="log-failed"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── PAGE: Console ──────────────────────────────────────── -->
+        <section class="page" id="page-console">
+            <div class="page-header">
+                <h1>Live Console</h1>
+                <button class="btn btn-sm" onclick="clearConsole()">🗑️ Clear</button>
+            </div>
+            <div class="glass card console-card">
+                <div id="console-output">
+                    <p class="log-dim">Menunggu output bot...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── PAGE: Settings ─────────────────────────────────────── -->
+        <section class="page" id="page-settings">
+            <div class="page-header">
+                <h1>Pengaturan</h1>
+            </div>
+
+            <div class="glass card">
+                <div class="card-title">Konfigurasi Auto-Posting</div>
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label>Campaign</label>
+                        <select id="cfg-campaign" class="glass-select"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Override Teks (kosongkan = pakai template)</label>
+                        <textarea id="cfg-text" class="glass-input" rows="3"
+                            placeholder="Teks custom untuk posting..."></textarea>
+                    </div>
+                    <div class="form-group toggle-group">
+                        <label>Gunakan Gambar Katalog Otomatis</label>
+                        <label class="toggle">
+                            <input type="checkbox" id="cfg-useimage" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveSettings()">💾 Simpan Konfigurasi</button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ── PAGE: Penjualan ────────────────────────────────────── -->
+        <section class="page" id="page-penjualan">
+            <div class="page-header">
+                <div>
+                    <h1>&#128184; Riwayat Penjualan</h1>
+                    <p class="page-sub">Semua produk yang sudah ditandai terjual</p>
+                </div>
+                <div style="display:flex;gap:8px">
+                    <button class="btn" onclick="syncFromSheets()" id="btn-sync-sales"
+                        style="background:rgba(79,195,247,0.12);color:var(--blue);border:1px solid rgba(79,195,247,0.3)"
+                        title="Paksa ambil ulang data dari Google Sheets">&#128260; Sync Sheets</button>
+                    <button class="btn" onclick="openAddTxModal()"
+                        style="background:rgba(34,212,108,0.15);color:var(--green);border:1px solid rgba(34,212,108,0.3)">&#43;
+                        Tambah Data</button>
+                    <button class="btn btn-primary" onclick="exportSalesCSV()">&#128229; Export CSV</button>
+                </div>
+            </div>
+
+            <!-- KPI Penjualan -->
+            <div class="stats-grid" id="sales-kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+                <div class="stat-card glass">
+                    <div class="stat-icon">&#128717;</div>
+                    <div class="stat-val green" id="sales-total-unit">-</div>
+                    <div class="stat-lbl">Total Unit Terjual</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon">&#128176;</div>
+                    <div class="stat-val" id="sales-total-omzet" style="font-size:18px">-</div>
+                    <div class="stat-lbl">Total Omzet</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon">&#128197;</div>
+                    <div class="stat-val blue" id="sales-this-month">-</div>
+                    <div class="stat-lbl">Terjual Bulan Ini</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon">&#127775;</div>
+                    <div class="stat-val yellow" id="sales-top-item" style="font-size:14px;line-height:1.3">-</div>
+                    <div class="stat-lbl">Produk Terlaris</div>
+                </div>
+            </div>
+
+            <!-- Filter -->
+            <div class="glass card">
+                <div class="filter-grid" style="grid-template-columns:2fr 1fr 1fr auto">
+                    <input type="text" id="filter-sales-q" class="glass-input"
+                        placeholder="&#128269; Cari nama barang / pembeli..." oninput="applySalesFilter()">
+                    <select id="filter-sales-user" class="glass-select" onchange="applySalesFilter()">
+                        <option value="">Semua Pemilik</option>
+                    </select>
+                    <select id="filter-sales-month" class="glass-select" onchange="applySalesFilter()">
+                        <option value="">Semua Bulan</option>
+                    </select>
+                    <button class="btn btn-sm" onclick="resetSalesFilter()">&#10006; Reset</button>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="glass card" style="padding:0;overflow:hidden">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Tanggal</th>
+                                <th>Pemilik</th>
+                                <th>Nama Barang</th>
+                                <th>Harga Jual</th>
+                                <th>Pembeli</th>
+                                <th>Catatan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-sales">
+                            <tr>
+                                <td colspan="8" class="loading">Memuat data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-footer">
+                    <span id="sales-count-label" style="font-size:12px;color:var(--sub)"></span>
+                    <span id="sales-total-label" style="font-size:13px;font-weight:700;color:var(--green)"></span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
+
+    <!-- ── Modal: Input Resi ──────────────────────────────────── -->
+    <div class="modal-backdrop" id="modal-add-resi" onclick="closeResiModal(event)">
+        <div class="modal-box glass">
+            <div class="modal-header">
+                <h3>📩 Input Resi Pengiriman</h3>
+                <button class="modal-close" onclick="closeResiModal()">✖</button>
+            </div>
+            <div id="resi-item-info"
+                style="background:rgba(255,255,255,0.04);border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:16px">
+            </div>
+            <div class="form-group">
+                <label>Kurir</label>
+                <select id="resi-courier" class="glass-select">
+                    <option value="jnt">J&T Express</option>
+                    <option value="jne">JNE</option>
+                    <option value="sicepat">SiCepat</option>
+                    <option value="spx">Shopee Express</option>
+                    <option value="anteraja">AnterAja</option>
+                    <option value="wahana">Wahana</option>
+                    <option value="idexpress">ID Express</option>
+                    <option value="pos">POS Indonesia</option>
+                    <option value="ninja">Ninja Express</option>
+                    <option value="lion">Lion Parcel</option>
+                    <option value="tiki">TIKI</option>
+                    <option value="grab">Grab</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Nomor Resi (AWB)</label>
+                <input type="text" id="resi-awb" class="glass-input" placeholder="Cth: 123456789012345">
+            </div>
+            <div class="form-group">
+                <label>5 Digit HP <span style="color:var(--sub);font-size:11px">(khusus JNE)</span></label>
+                <input type="text" id="resi-hp" class="glass-input" placeholder="Opsional untuk JNE">
+            </div>
+            <div id="resi-error" style="color:var(--red);font-size:12px;display:none;margin-bottom:8px"></div>
+            <div style="display:flex;gap:10px;margin-top:16px">
+                <button class="btn btn-primary" style="flex:1" id="btn-submit-resi" onclick="submitResi()">
+                    ✅ Simpan & Pantau Resi
+                </button>
+                <button class="btn" onclick="closeResiModal()">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Modal: Tambah Stok ─────────────────────────────────── -->
+    <div class="modal-backdrop" id="modal-add-stock" onclick="closeModal(event)">
+        <div class="modal-box glass">
+            <div class="modal-header">
+                <h3>➕ Tambah Stok</h3>
+                <button class="modal-close" onclick="closeAddModal()">✖</button>
+            </div>
+
+            <div class="form-group">
+                <label>Pemilik Barang</label>
+                <select id="modal-user" class="glass-select"></select>
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <select id="modal-status" class="glass-select">
+                    <option value="Ready">✅ Ready (Barang sudah ada)</option>
+                    <option value="Not Ready">🚚 Di Jalan (Masih dalam pengiriman)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                    <label>Nama Barang</label>
+                    <label class="toggle" title="Mode multi-item">
+                        <input type="checkbox" id="modal-multi-toggle" onchange="toggleMultiMode()">
+                        <span class="slider"></span>
+                    </label>
+                    <span style="font-size:12px;color:var(--sub)" id="multi-label">1 item</span>
+                </div>
+                <!-- Single mode -->
+                <input type="text" id="modal-item-single" class="glass-input"
+                    placeholder="Cth: Samsung A55 8/256 Black">
+                <!-- Multi mode -->
+                <textarea id="modal-item-multi" class="glass-input" rows="5"
+                    placeholder="Satu item per baris:&#10;Samsung A55 8/256 Black&#10;iPhone 14 128GB&#10;Redmi Note 13 Pro"
+                    style="display:none;resize:vertical"></textarea>
+            </div>
+
+            <div id="modal-error" style="color:var(--red);font-size:12px;display:none"></div>
+
+            <div style="display:flex;gap:10px;margin-top:16px">
+                <button class="btn btn-primary" style="flex:1" onclick="submitAddStock()" id="btn-submit-add">
+                    ✅ Simpan ke Google Sheets
+                </button>
+                <button class="btn" onclick="closeAddModal()">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Modal: Tandai Terjual ──────────────────────────────── -->
+    <div class="modal-backdrop" id="modal-sell" onclick="closeSellModal(event)">
+        <div class="modal-box glass">
+            <div class="modal-header">
+                <h3>💸 Tandai Terjual</h3>
+                <button class="modal-close" onclick="closeSellModal()">✖</button>
+            </div>
+            <div id="sell-item-info"
+                style="background:rgba(255,255,255,0.04);border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:16px">
+            </div>
+            <div class="form-group">
+                <label>Harga Jual <span style="color:var(--sub);font-size:11px">(Rp, opsional)</span></label>
+                <input type="number" id="sell-harga" class="glass-input" placeholder="Cth: 1500000" min="0">
+            </div>
+            <div class="form-group">
+                <label>Nama Pembeli <span style="color:var(--sub);font-size:11px">(opsional)</span></label>
+                <input type="text" id="sell-pembeli" class="glass-input" placeholder="Cth: Budi">
+            </div>
+            <div class="form-group">
+                <label>Catatan <span style="color:var(--sub);font-size:11px">(opsional)</span></label>
+                <input type="text" id="sell-catatan" class="glass-input" placeholder="Cth: COD, transfer BCA">
+            </div>
+            <div id="sell-error" style="color:var(--red);font-size:12px;display:none;margin-bottom:8px"></div>
+            <div style="display:flex;gap:10px;margin-top:16px">
+                <button class="btn btn-primary" style="flex:1;background:linear-gradient(135deg,#22c55e,#16a34a)"
+                    id="btn-submit-sell" onclick="submitSell()">
+                    💸 Konfirmasi Terjual
+                </button>
+                <button class="btn" onclick="closeSellModal()">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Modal: Tambah Transaksi Historis ────────────────────── -->
+    <div class="modal-backdrop" id="modal-add-tx" onclick="closeAddTxModal(event)">
+        <div class="modal-box glass">
+            <div class="modal-header">
+                <h3>&#128184; Tambah Data Penjualan</h3>
+                <button class="modal-close" onclick="closeAddTxModal()">&#10006;</button>
+            </div>
+            <div class="form-group">
+                <label>Nama Barang <span style="color:var(--red)">*</span></label>
+                <input type="text" id="tx-item" class="glass-input" placeholder="Cth: Samsung A55 8/256 Black">
+            </div>
+            <div class="form-group">
+                <label>Pemilik</label>
+                <select id="tx-user" class="glass-select">
+                    <option value="">-- Pilih Pemilik --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Harga Jual <span style="color:var(--sub);font-size:11px">(Rp)</span></label>
+                <input type="number" id="tx-harga" class="glass-input" placeholder="Cth: 1500000" min="0">
+            </div>
+            <div class="form-group">
+                <label>Tanggal Terjual</label>
+                <input type="date" id="tx-date" class="glass-input">
+            </div>
+            <div class="form-group">
+                <label>Nama Pembeli <span style="color:var(--sub);font-size:11px">(opsional)</span></label>
+                <input type="text" id="tx-pembeli" class="glass-input" placeholder="Cth: Budi">
+            </div>
+            <div class="form-group">
+                <label>Catatan <span style="color:var(--sub);font-size:11px">(opsional)</span></label>
+                <input type="text" id="tx-catatan" class="glass-input" placeholder="Cth: COD, transfer BCA">
+            </div>
+            <div id="tx-error" style="color:var(--red);font-size:12px;display:none;margin-bottom:8px"></div>
+            <div style="display:flex;gap:10px;margin-top:16px">
+                <button class="btn btn-primary" style="flex:1" id="btn-submit-tx" onclick="submitAddTx()">
+                    &#128184; Simpan Transaksi
+                </button>
+                <button class="btn" onclick="closeAddTxModal()">Batal</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

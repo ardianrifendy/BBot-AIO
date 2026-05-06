@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+
+# WhatsApp session
+agents/whatsapp/.wwebjs_auth/
+agents/whatsapp/.wwebjs_cache/
+
+# Facebook session
+agents/facebook/session/
+
+# Google credentials (JANGAN di-commit!)
+credentials.json
+
+# Logs
+reports/logs/*.log
+reports/logs/*.txt
+
+# Generated catalog images (otomatis di-regenerate)
+agents/facebook/images/catalog_*.jpg
+agents/facebook/images/catalog_*.png
+
+# Debug files
+debug_*.js
+*.zip
+
+# Windows
+Thumbs.db
+Desktop.ini

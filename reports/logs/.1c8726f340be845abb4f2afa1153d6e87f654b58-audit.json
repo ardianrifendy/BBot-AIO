@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 7
+    },
+    "auditLog": "D:\\AntiGravity\\BagaskaraBot\\reports\\logs\\.1c8726f340be845abb4f2afa1153d6e87f654b58-audit.json",
+    "files": [
+        {
+            "date": 1778036257766,
+            "name": "D:\\AntiGravity\\BagaskaraBot\\reports\\logs\\2026-05-06.log",
+            "hash": "184d2679fcb69cc8bd9a8b84229f9dc964101c569057f0fafe94875bd0f2dde6"
+        }
+    ],
+    "hashType": "sha256"
+}

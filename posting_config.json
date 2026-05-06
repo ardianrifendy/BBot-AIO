@@ -1,0 +1,14 @@
+{
+  "active": false,
+  "campaign_name": "Gresik",
+  "interval_hours": 6,
+  "use_catalog_image": true,
+  "custom_text_override": "",
+  "_comment": {
+    "active": "Set ke false untuk menonaktifkan auto-posting sementara",
+    "campaign_name": "Isi dengan nama campaign dari campaigns.json. Contoh: 'Grup Jual Beli HP'",
+    "interval_hours": "Info saja (tidak dipakai langsung, interval diatur di main.js)",
+    "use_catalog_image": "Set ke true agar gambar katalog otomatis dibuat dari stok",
+    "custom_text_override": "Jika diisi, teks ini yang dipakai (bukan spintax_template.txt). Kosongkan untuk pakai template."
+  }
+}

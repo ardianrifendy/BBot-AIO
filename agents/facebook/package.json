@@ -1,0 +1,6 @@
+{
+    "name": "bagaskarabot-facebook-agent",
+    "version": "2.0.0",
+    "type": "module",
+    "description": "Facebook Agent — Auto-Poster & Marketplace Scraper"
+}
